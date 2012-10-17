@@ -30,6 +30,7 @@ import urllib2
 from buildscripts import utils
 from buildscripts import moduleconfig
 
+# in site_scons/
 import libdeps
 
 # ensure scons version.
@@ -44,7 +45,7 @@ SConsignFile( scons_data_dir + "/sconsign" )
 
 DEFAULT_INSTALL_DIR = "/usr/local"
 
-# what is this?
+# replacement of str.rpartition methods.
 def _rpartition(string, sep):
     """A replacement for str.rpartition which is missing in Python < 2.5
     """
@@ -55,8 +56,10 @@ def _rpartition(string, sep):
 
 
 
+# check what? just return
 buildscripts.bb.checkOk()
 
+# just append some directory to sys path.
 def findSettingsSetup():
     sys.path.append( "." )
     sys.path.append( ".." )
@@ -67,14 +70,17 @@ def findSettingsSetup():
 
 options = {}
 
+# topass...
 options_topass = {}
 
+# add option to scons.
 def add_option( name, help, nargs, contributesToVariantDir,
                 dest=None, default = None, type="string", choices=None ):
 
     if dest is None:
         dest = name
 
+    # call scons api to add options.
     AddOption( "--" + name , 
                dest=dest,
                type=type,
@@ -90,6 +96,7 @@ def add_option( name, help, nargs, contributesToVariantDir,
                       "dest" : dest,
                       "default": default }
 
+# get specific option value by name.
 def get_option( name ):
     return GetOption( name )
 
@@ -107,6 +114,7 @@ def _has_option( name ):
     return True
 
 def has_option( name ):
+
     x = _has_option(name)
 
     if name not in options_topass:
@@ -118,6 +126,7 @@ def has_option( name ):
 def use_system_version_of_library(name):
     return has_option('use-system-all') or has_option('use-system-' + name)
 
+# get build dir, pass it.
 def get_variant_dir():
     
     a = []
@@ -147,6 +156,7 @@ def get_variant_dir():
         s += "normal/"
     return s
         
+# following options, just read description of each option
 # build output
 add_option( "mute" , "do not display commandlines for compiling and linking, to reduce screen noise", 0, False )
 
@@ -241,6 +251,8 @@ add_option('client-dist-basename', "Name of the client source archive.", 1, Fals
            default='mongo-cxx-driver')
 
 # don't run configure if user calls --help
+# if run with help, return
+# q: when run with --help, why print options? where? in scons?
 if GetOption('help'):
     Return()
 
@@ -257,7 +269,9 @@ printLocalInfo()
 
 boostLibs = [ "thread" , "filesystem" , "program_options", "system" ]
 
+# TODO what is COMMAND_LINE_TARGETS?
 onlyServer = len( COMMAND_LINE_TARGETS ) == 0 or ( len( COMMAND_LINE_TARGETS ) == 1 and str( COMMAND_LINE_TARGETS[0] ) in [ "mongod" , "mongos" , "test" ] )
+# TODO what is nix?
 nix = False
 linux = False
 linux64  = False
@@ -271,6 +285,7 @@ force64 = has_option( "force64" )
 if not force64 and not force32 and os.getcwd().endswith( "mongo-64" ):
     force64 = True
     print( "*** assuming you want a 64-bit build b/c of directory *** " )
+# arch? cpu?
 msarch = None
 if force32:
     msarch = "x86"
@@ -284,17 +299,22 @@ debugBuild = has_option( "debugBuild" ) or has_option( "debugBuildAndLogging" )
 debugLogging = has_option( "debugBuildAndLogging" )
 noshell = has_option( "noshell" ) 
 
+# use spider monkey javascript engine.
 usesm = has_option( "usesm" )
+# use v8 javascript engine.
 usev8 = has_option( "usev8" ) 
 
+# Asynchronous IO. Not ready yet?
 asio = has_option( "asio" )
 
+# see add option.
 usePCH = has_option( "usePCH" )
 
 justClientLib = (COMMAND_LINE_TARGETS == ['mongoclient'])
 
+# create environment
 env = Environment( BUILD_DIR=variantDir,
-                   CLIENT_ARCHIVE='${CLIENT_DIST_BASENAME}${DIST_ARCHIVE_SUFFIX}',
+                   CLIENT_ARCHIVE='${CLIENT_DIST_BASENAME}${DIST_ARCHIVE_SUFFIX}', # see below
                    CLIENT_DIST_BASENAME=get_option('client-dist-basename'),
                    CLIENT_LICENSE='#distsrc/client/LICENSE.txt',
                    CLIENT_SCONSTRUCT='#distsrc/client/SConstruct',
@@ -305,6 +325,9 @@ env = Environment( BUILD_DIR=variantDir,
                    PYTHON=utils.find_python(),
                    SERVER_ARCHIVE='${SERVER_DIST_BASENAME}${DIST_ARCHIVE_SUFFIX}',
                    TARGET_ARCH=msarch ,
+                   # soncs tools, some python callable to change env viriables.
+                   # see http://www.scons.org/doc/production/HTML/scons-man.html
+                   # But where these defined?
                    tools=["default", "gch", "jsheader", "mergelib", "unittest"],
                    UNITTEST_ALIAS='unittests',
                    UNITTEST_LIST='#build/unittests.txt',
@@ -315,17 +338,22 @@ env = Environment( BUILD_DIR=variantDir,
                    CONFIGURELOG = '#' + scons_data_dir + '/config.log'
                    )
 
+# define _LIBDEPS used by libdeps, can cancel? see site_scons/libdeps.py
 env['_LIBDEPS'] = '$_LIBDEPS_OBJS'
 
+# apply option.
 if has_option('mute'):
+    # TODO what's this?
     env.Append( CCCOMSTR = "Compiling $TARGET" )
     env.Append( CXXCOMSTR = env["CCCOMSTR"] )
     env.Append( LINKCOMSTR = "Linking $TARGET" )
     env.Append( ARCOMSTR = "Generating library $TARGET" )
 
+# set concurrency level, global or db.
 if has_option('mongod-concurrency-level'):
     env.Append(CPPDEFINES=['MONGOD_CONCURRENCY_LEVEL=MONGOD_CONCURRENCY_LEVEL_%s' % get_option('mongod-concurrency-level').upper()])
 
+# see site_scons/libdeps.py, just for link static library.
 libdeps.setup_environment( env )
 
 if env['PYSYSPLATFORM'] == 'linux3':
@@ -433,6 +461,7 @@ if has_option( "extralib" ):
     for x in GetOption( "extralib" ).split( "," ):
         env.Append( LIBS=[ x ] )
 
+# class to install setup?
 class InstallSetup:
     binaries = False
     libraries = False
@@ -446,6 +475,7 @@ class InstallSetup:
         self.libraries = False
         self.headers = False
 
+# object
 installSetup = InstallSetup()
 
 if has_option( "full" ):
@@ -473,6 +503,7 @@ nixLibPrefix = "lib"
 dontReplacePackage = False
 isBuildingLatest = False
 
+# set install dir.
 if has_option( "prefix" ):
     installDir = GetOption( "prefix" )
 

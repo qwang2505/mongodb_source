@@ -1,0 +1,7 @@
+
+moduleconfig:
+    
+    discover_modules: discover mongodb sub modules from db/modules directory.
+      modules must have a build.py module, and must define a configure fnction
+      in build.py.
+    configure_modules: configure modules by run configure method last step found.

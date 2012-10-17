@@ -3,6 +3,7 @@
 import os
 import re
 
+# check what? like check some version, not sure about it.
 def checkOk():
     dir = os.getcwd()
     m = re.compile( ".*/.*_V(\d+\.\d+)/mongo" ).findall( dir )
@@ -10,7 +11,7 @@ def checkOk():
         return
     if len(m) > 1:
         raise Exception( "unexpected: " + str(m) )
-    
+
     m = "v" + m[0]
     print( m )
     print( "expected version [" + m + "]" )
@@ -19,5 +20,5 @@ def checkOk():
     diff = Popen( [ "git", "diff", "origin/v1.2" ], stdout=PIPE ).communicate()[ 0 ]
     if len(diff) > 0:
         print( diff )
+        # bb stand for build bot?
         raise Exception( "build bot broken?" )
-
