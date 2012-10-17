@@ -1,0 +1,24 @@
+
+# This is the whole plan of reading source code of mongodb.
+
+Why read it?
+1. To know more about mongodb.
+2. To learn c/c++ well.
+3. To learn some useful coding skills from reading good coding.
+4. To learn more about design patterns.
+5. Other...
+
+Plan:
+1. Read the whole source code in 3 months. From today(Oct 17, 2012) to Jan 17, 2013.
+2. That's all.
+
+Period: 
+1. Read docs, build docs, learn basic function of third party libs, learn basic function of 
+   system features, read scons files. (One week, deadline Oct 24, 2012)  (CHECK?)
+2. From main function, read code abound mongodb. Just read basic functions, ignore master-slave,
+   replicaset, shard, and so on. (Four weeks, deadline Nov 24, 2012)  (CHECK?)
+3. Read other parts. (Seven weeks, deadline Jan 17, 2013) (CHECK?)
+
+TODO: need more detail period plan.
+
+Now, start!
