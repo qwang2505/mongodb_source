@@ -13,6 +13,8 @@
 # This file, SConstruct, configures the build environment, and then delegates to
 # several, subordinate SConscript files, which describe specific build rules.
 
+# what is this?
+# see buildscripts directory.
 import buildscripts
 import buildscripts.bb
 import datetime
@@ -30,15 +32,19 @@ from buildscripts import moduleconfig
 
 import libdeps
 
+# ensure scons version.
 EnsureSConsVersion( 1, 1, 0 )
+# set scons data dir.
 if "uname" in dir(os):
     scons_data_dir = ".scons/%s/%s" % ( os.uname()[0] , os.getenv( "HOST" , "nohost" ) )
 else:
     scons_data_dir = ".scons/%s/" % os.getenv( "HOST" , "nohost" )
+# what is SConsignFile?
 SConsignFile( scons_data_dir + "/sconsign" )
 
 DEFAULT_INSTALL_DIR = "/usr/local"
 
+# what is this?
 def _rpartition(string, sep):
     """A replacement for str.rpartition which is missing in Python < 2.5
     """
