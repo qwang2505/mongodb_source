@@ -13,15 +13,18 @@ Import("usesm usev8")
 Import("installSetup")
 Import("darwin windows solaris linux nix")
 
+# include sub sconscript
 env.SConscript(['base/SConscript',
                 'platform/SConscript',
                 'unittest/SConscript'])
 
+# what is this?
 def add_exe( v ):
     return "${PROGPREFIX}%s${PROGSUFFIX}" % v
 
 # ------    SOURCE FILE SETUP -----------
 
+# build foundation
 env.StaticLibrary('foundation',
                   [ 'util/assert_util.cpp',
                     'util/concurrency/mutexdebugger.cpp',
@@ -35,13 +38,16 @@ env.StaticLibrary('foundation',
                            '$BUILD_DIR/third_party/shim_allocator',
                            '$BUILD_DIR/third_party/shim_boost'])
 
+# build stringutils.
 env.StaticLibrary('stringutils', ['util/stringutils.cpp', 'util/base64.cpp',])
 
+# build md5
 env.StaticLibrary('md5', [
         'util/md5.cpp',
         'util/md5main.cpp',
         ])
 
+# build bson
 env.StaticLibrary('bson', [
         'util/safe_num.cpp',
         'bson/oid.cpp',
@@ -53,12 +59,14 @@ env.StaticLibrary('bson', [
         'stringutils',
         ])
 
+# TODO cpp unit test?
 env.CppUnitTest('safe_num_test', ['util/safe_num_test.cpp'],
                 LIBDEPS=['bson'])
 
 env.CppUnitTest('bson_field_test', ['bson/bson_field_test.cpp'],
                 LIBDEPS=['bson'])
 
+# files to build mongocommon
 commonFiles = [ "pch.cpp",
                 "buildinfo.cpp",
                 "db/hasher.cpp",
@@ -98,6 +106,7 @@ commonFiles = [ "pch.cpp",
                 "client/distlock.cpp",
                 ]
 
+# build mongocommon
 env.StaticLibrary('mongocommon', commonFiles,
                   LIBDEPS=['bson',
                            'foundation',
@@ -108,6 +117,7 @@ env.StaticLibrary('mongocommon', commonFiles,
                            '$BUILD_DIR/third_party/murmurhash3/murmurhash3',
                            '$BUILD_DIR/third_party/shim_boost'],)
 
+# build coredb.
 env.StaticLibrary("coredb", [
         "client/parallel.cpp",
         "db/commands.cpp",
@@ -164,6 +174,7 @@ coreServerFiles = [ "util/version.cpp",
                     "db/stats/service_stats.cpp",
                     ]
 
+# buld ntservice
 env.StaticLibrary('ntservice', ['util/ntservice.cpp'])
 
 scripting_common_files = [ "scripting/engine.cpp",
@@ -171,11 +182,14 @@ scripting_common_files = [ "scripting/engine.cpp",
                            "scripting/bench.cpp",
                            ]
 
+# build bson template evalutor
 env.StaticLibrary('bson_template_evaluator', ["scripting/bson_template_evaluator.cpp"],
                   LIBDEPS=['bson'])
+# build bson template evalutor test.
 env.CppUnitTest('bson_template_evaluator_test', ['scripting/bson_template_evaluator_test.cpp'],
                 LIBDEPS=['bson_template_evaluator'])
 
+# build scripting, use different javascript engine.
 if usesm:
     env.StaticLibrary('scripting', scripting_common_files + ['scripting/engine_spidermonkey.cpp'],
                       LIBDEPS=['$BUILD_DIR/third_party/js-1.7/js', 'bson_template_evaluator'])
@@ -199,6 +213,7 @@ else:
 # handle processinfo*
 processInfoFiles = [ "util/processinfo.cpp" ]
 
+# understand this: get file object
 processInfoPlatformFile = env.File( "util/processinfo_${PYSYSPLATFORM}.cpp" )
 # NOTE( schwerin ): This is a very un-scons-y way to make this decision, and prevents one from using
 # code generation to produce util/processinfo_$PYSYSPLATFORM.cpp.
@@ -308,10 +323,13 @@ serverOnlyFiles = [ "db/curop.cpp",
                     "db/pipeline/document_source_cursor.cpp",
                     "db/driverHelpers.cpp" ]
 
+# build dbcmdline
 env.Library( "dbcmdline", "db/cmdline.cpp" )
 
+# buld stacktrace
 env.Library('stacktrace', 'util/stacktrace.cpp')
 
+# build lame stacktrace test
 env.Program('lame_stacktrace_test', 'util/lame_stacktrace_test.cpp',
             LIBDEPS=['stacktrace'])
 
@@ -319,6 +337,7 @@ serverOnlyFiles += mmapFiles
 
 serverOnlyFiles += [ "db/stats/snapshots.cpp" ]
 
+# build coreshard
 env.Library( "coreshard", [ "s/config.cpp",
                             "s/grid.cpp",
                             "s/chunk.cpp",
@@ -345,6 +364,7 @@ mongosLibraryFiles = [
     "s/security.cpp",
     ]
 
+# build mongoscore
 env.Library( "mongoscore" , mongosLibraryFiles )
 
 env.CppUnitTest( "balancer_policy_test" , [ "s/balancer_policy_tests.cpp" ] ,
@@ -361,8 +381,10 @@ serverOnlyFiles += [ "s/d_logic.cpp",
                      "db/module.cpp",
                      "db/modules/mms.cpp", ]
 
+# build defaultversion
 env.StaticLibrary("defaultversion", "s/default_version.cpp")
 
+# build serveronly
 env.StaticLibrary("serveronly", serverOnlyFiles,
                   LIBDEPS=["coreshard",
                            "dbcmdline",
@@ -374,12 +396,14 @@ mongodAndMongosFiles = [
     "db/connection_factory.cpp",
     "util/net/message_server_port.cpp",
     ]
+# build mongodandmongos
 env.StaticLibrary("mongodandmongos", mongodAndMongosFiles)
 
 # These files go into the tools, tests, shell, etc. but not mongod or mongos
 everythingButMongodAndMongosFiles = [
     "client/connection_factory.cpp",
     ]
+# not mongodb or mongos...
 env.StaticLibrary("notmongodormongos", everythingButMongodAndMongosFiles)
 
 mongodOnlyFiles = [ "db/db.cpp", "db/compact.cpp", "db/commands/touch.cpp" ]
@@ -394,29 +418,35 @@ for modName, modSources in env["MONGO_MODULES"].items():
     modules.append(libName)
 
 # ----- TARGETS ------
-
+# build gridfs
 env.StaticLibrary("gridfs", "client/gridfs.cpp")
 
 if has_option( 'use-cpu-profiler' ):
     coreServerFiles.append( 'db/commands/cpuprofile.cpp' )
     env.Append( LIBS=['profiler'] )
 
+# build coreserver
 env.StaticLibrary("coreserver", coreServerFiles, LIBDEPS=["mongocommon", "scripting"])
 
 # main db target
+# build mongod and install to root of source.
 mongod = env.Install(
     '#/', env.Program( "mongod", mongodOnlyFiles,
                        LIBDEPS=["coreserver", "serveronly", "coredb", "ntservice",
                                 "mongodandmongos"] + modules ) )
+
+# TODO what is Default?
 Default( mongod )
 
 # tools
 allToolFiles = [ "tools/tool.cpp", "tools/stat_util.cpp" ]
+# build alltools
 env.StaticLibrary("alltools", allToolFiles, LIBDEPS=["serveronly", "coreserver", "coredb",
                                                      "notmongodormongos"])
 
 normalTools = [ "dump", "restore", "export", "import", "stat", "top", "oplog" ]
 env.Alias( "tools", [ "#/${PROGPREFIX}mongo" + x + "${PROGSUFFIX}" for x in normalTools ] )
+# install tools
 for x in normalTools:
     env.Install( '#/', env.Program( "mongo" + x, [ "tools/" + x + ".cpp" ],
                                     LIBDEPS=["alltools"]) )
@@ -433,14 +463,17 @@ env.Install( '#/', [
         env.Program( "mongoperf", "client/examples/mongoperf.cpp", LIBDEPS=["alltools"] ),
         ] )
 
-# mongos
+# build mongos
 mongos = env.Program(
     "mongos", [ "s/server.cpp"] ,
     LIBDEPS=["mongoscore", "coreserver", "coredb", "mongocommon", "coreshard", "dbcmdline", "ntservice",
              "mongodandmongos"])
+# install mognos
 env.Install( '#/', mongos )
 
+# build client and shell
 env.Library("clientandshell", ["client/clientAndShell.cpp"], LIBDEPS=["mongocommon", "defaultversion", "gridfs", "notmongodormongos"])
+# buld all client
 env.Library("allclient", "client/clientOnly.cpp", LIBDEPS=["clientandshell"])
 
 if has_option( "sharedclient" ):
@@ -451,6 +484,7 @@ env.StaticLibrary('testframework', ['dbtests/framework.cpp'], LIBDEPS=['unittest
 env.StaticLibrary('mocklib', [f for f in Glob( "dbtests/mock/*.cpp" )],
   LIBDEPS=['unittest/unittest', 'mongocommon'])
 
+# install test
 test = testEnv.Install(
     '#/',
     testEnv.Program("test",
@@ -468,6 +502,7 @@ test = testEnv.Install(
 if len(testEnv.subst('$PROGSUFFIX')):
     testEnv.Alias( "test", "#/${PROGPREFIX}test${PROGSUFFIX}" )
 
+# build and install perftest
 env.Install( '#/', testEnv.Program( "perftest", [ "dbtests/perf/perftest.cpp" ], LIBDEPS=["serveronly", "coreserver", "coredb", "testframework", "notmongodormongos" ] ) )
 
 # --- sniffer ---
@@ -482,12 +517,14 @@ if darwin or env["_HAVEPCAP"]:
     else:
         sniffEnv.Append( LIBS=[ "wpcap" ] )
 
+    # build and install mongosniff
     sniffEnv.Install( '#/', sniffEnv.Program( "mongosniff", "tools/sniffer.cpp",
                                               LIBDEPS=["gridfs", "serveronly", "coreserver", "coredb", "notmongodormongos"] ) )
 
 # --- shell ---
 
 # if you add a file here, you need to add it in scripting/engine.cpp and shell/createCPPfromJavaScriptFiles.js as well
+# TODO what is JSHeader?
 env.JSHeader( "shell/mongo.cpp" , 
               [ "shell/utils.js","shell/utils_sh.js","shell/db.js","shell/mongo.js","shell/mr.js","shell/query.js","shell/collection.js"] )
 
@@ -504,6 +541,7 @@ coreShellFiles = [ "shell/dbshell.cpp",
                    "shell/linenoise_utf8.cpp",
                    "shell/mk_wcwidth.cpp"]
 
+# build and install mongo
 if shellEnv is not None:
     mongo_shell = shellEnv.Program(
         "mongo",

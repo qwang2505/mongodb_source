@@ -1135,6 +1135,7 @@ Export("env")
 Export("clientEnv")
 Export("shellEnv")
 Export("testEnv")
+# export function? interseting.
 Export("has_option use_system_version_of_library")
 Export("installSetup")
 Export("usesm usev8")

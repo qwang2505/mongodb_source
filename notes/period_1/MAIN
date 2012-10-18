@@ -2,3 +2,69 @@
 # start at Oct 17, 2012
 
 1. Read global scons, learn about function of features.
+
+add options, export env, etc.
+
+
+2. Read scons script in mongo, learn about build order, etc.
+
+content in SConscript in mongo:
+
+sub sconscript:
+    base/SConscript 
+    platform/SConscript
+    unittest/SConscript
+libs:
+    foundation
+    stringutils
+    md5
+    bson
+    mongocommon
+    coredb
+    ntservice
+    bson_template_evaluator
+    scripting
+    dbcmdline
+    stacktrace
+    coreshard
+    mongoscore
+    defaultversion
+    serveronly
+    mongodandmongos
+    notmongodormongos
+    # build modules, and add to LIBS
+    gridfs
+    coreserver
+    alltools
+    docgenerator
+    clientandshell
+    allclient
+    mongoclient
+    testframework
+    mocklib
+program:
+    lame_stacktrace_test
+    mongod
+    mongodump
+    mongorestore
+    mongoexport
+    mongoimport
+    mongostat
+    mongotop
+    mongooplog
+    mongofiels
+    docgen
+    loadgen
+    bsondump
+    mongobridge
+    mongoperf
+    mongos
+    test
+    perftest
+    mongosniff
+    mongo
+cpp unit test:
+    safe_num_test
+    bson_field_test
+    bson_template_evaluator_test
+    balancer_policy_test

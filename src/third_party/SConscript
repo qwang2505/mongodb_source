@@ -6,14 +6,20 @@ env.SConscript( [
         "murmurhash3/SConscript",
         ] )
 
+# build pcre.
 if use_system_version_of_library("pcre"):
+    # use system libs pcre and pcrecpp to build static library pcrecpp.
     env.StaticLibrary( "pcrecpp", ['shim_pcrecpp.cc'],
                        SYSLIBDEPS=[ 'pcre' , 'pcrecpp' ] )
 else:
+    # use library in third party directory to build pcrecpp.
     env.SConscript('pcre-${PCRE_VERSION}/SConscript')
     env.StaticLibrary( "pcrecpp", ['shim_pcrecpp.cc'],
                        LIBDEPS=[ 'pcre-${PCRE_VERSION}/pcrecpp' ] )
 
+# TODO understand shim_*.cpp, just an empty file, in this way to build lib,
+# just like to redirect?
+# build boost.
 if use_system_version_of_library("boost"):
     env.StaticLibrary("shim_boost", ['shim_boost.cpp'])
 else:
@@ -24,6 +30,8 @@ else:
                                  'boost/boost_thread',
                                  'boost/boost_system',
                                  ] )
+
+# build snappy
 if use_system_version_of_library("snappy"):
     env.StaticLibrary("shim_snappy", ['shim_snappy.cpp'],
                       SYSLIBDEPS=['snappy'])
@@ -32,6 +40,7 @@ else:
     env.SConscript('snappy/SConscript')
     env.StaticLibrary('shim_snappy', ['shim_snappy.cpp'], LIBDEPS=['snappy/snappy'])
 
+# build spider monkey
 if use_system_version_of_library("sm"):
     env.StaticLibrary("shim_spidermonkey", ['shim_spidermonkey.cpp'], SYSLIBDEPS=['js'])
 else:
@@ -43,6 +52,7 @@ else:
     env.SConscript('js-1.7/SConscript')
     env.StaticLibrary('shim_spidermonkey', ['shim_spidermonkey.cpp'], LIBDEPS=['js-1.7/js'])
 
+# build tcmalloc
 if (GetOption("allocator") != "tcmalloc") or use_system_version_of_library("tcmalloc"):
     env.StaticLibrary("shim_allocator", "shim_allocator.cpp")
 else:
