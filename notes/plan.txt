@@ -14,7 +14,7 @@ Plan:
 
 Period: 
 1. Read docs, build docs, learn basic function of third party libs, learn basic function of 
-   system features, read scons files. (One week, deadline Oct 24, 2012)  (CHECK?)
+   system features, read scons files. (One week, deadline Oct 24, 2012)  (CHECK?)(DELAYED, BUT BASICLY DONE. HAVE READ SCONS FILES, KNOW ABOUT LIBS AND SO ON.)
 2. From main function, read code abound mongodb. Just read basic functions, ignore master-slave,
    replicaset, shard, and so on. (Four weeks, deadline Nov 24, 2012)  (CHECK?)
 3. Read other parts. (Seven weeks, deadline Jan 17, 2013) (CHECK?)
