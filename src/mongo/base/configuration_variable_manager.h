@@ -52,9 +52,12 @@ namespace mongo {
      * TODO: Support introspection of configuration variables, for use in reporting tools, etc.
      */
     class ConfigurationVariableManager {
+        // Johnny: How to implement dis allow copy? this might be fun.
         MONGO_DISALLOW_COPYING(ConfigurationVariableManager);
 
     public:
+        // Johnny: boost::function, declare a function type, Status is reture value, string is parameter.
+        // Why can pass a SetFromStringImpl object as parameter of registerVariable?
         typedef boost::function<Status (const std::string&)> SetFromStringFn;
 
         ConfigurationVariableManager();
@@ -67,6 +70,10 @@ namespace mongo {
          * Returns ErrorCodes::DuplicateKey if another module has already registered "name",
          * or ErrorCodes::BadValue if "setter" is an invalid function object.
          */
+        /*
+         * Johnny: when set a variable, have to provide a setter function? Uh...
+         *   Right, it is called below, so user won't worry about the setter.
+         */
         Status registerVariableFn(const std::string& name, const SetFromStringFn setter);
 
         /**
@@ -76,6 +83,11 @@ namespace mongo {
          * or ErrorCodes::BadValue if "storage" is NULL.
          *
          * Uses a generic SetFromString function, based on the type T.
+         */
+        /*
+         * Johnny: SetFromStringImpl is a template class, so here initialize a new object.
+         * But, is the new class object a boost::function object? why can pass as parameter?
+         * template function
          */
         template <typename T>
         Status registerVariable(const std::string& name, T* storage) {

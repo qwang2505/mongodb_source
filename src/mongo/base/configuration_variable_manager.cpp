@@ -47,6 +47,10 @@ namespace mongo {
         return iter->second(value);
     }
 
+    /*
+     * Johnny: can separate implementating different template type?
+     *    this is interesting.
+     */
     template <>
     Status ConfigurationVariableManager::SetFromStringImpl<std::string>::operator()(
             const std::string& stringValue) const {
@@ -54,6 +58,10 @@ namespace mongo {
         return Status::OK();
     }
 
+    /*
+     * Johnny: Be careful about this and the above method, this is the same method,
+     *   but with different template type.
+     */
     template <typename T>
     Status ConfigurationVariableManager::SetFromStringImpl<T>::operator()(
             const std::string& stringValue) const {
@@ -61,6 +69,8 @@ namespace mongo {
         return parseNumberFromString(stringValue, _storage);
     }
 
+    // Johnny: declare template class?
+    // Johnny: what's this?
     template class ConfigurationVariableManager::SetFromStringImpl<short>;
     template class ConfigurationVariableManager::SetFromStringImpl<int>;
     template class ConfigurationVariableManager::SetFromStringImpl<long>;
