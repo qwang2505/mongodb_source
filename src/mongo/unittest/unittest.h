@@ -36,10 +36,17 @@
 /**
  * Fail unconditionally, reporting the given message.
  */
+
+/*
+ * Johnny: understand __FILE__ and __LINE__, it's the file and line number where the macro is been called.
+ */
 #define FAIL(MESSAGE) ::mongo::unittest::TestAssertion( __FILE__ , __LINE__ ).fail( (MESSAGE) )
 
 /**
  * Fails unless "EXPRESSION" is true.
+ */
+/*
+ *  Johnny: () the expression.
  */
 #define ASSERT_TRUE(EXPRESSION) ::mongo::unittest::TestAssertion( __FILE__, __LINE__ ).failUnless( \
             (EXPRESSION), "Expected: " #EXPRESSION )
@@ -66,6 +73,9 @@
 /**
  * Binary comparison utility macro.  Do not use directly.
  */
+/*
+ * Johnny: Whoa, this is interesting.
+ */
 #define _ASSERT_COMPARISON(COMPARISON, a, b) mongo::unittest::ComparisonAssertion( \
             #a, #b , __FILE__ , __LINE__ ).assert##COMPARISON( (a), (b) )
 
@@ -75,6 +85,10 @@
  * If "EXPRESSION" throws no exception, or one that is neither of type "EXCEPTION_TYPE" nor
  * of a subtype of "EXCEPTION_TYPE", the test is considered a failure and further evaluation
  * halts.
+ */
+/*
+ * Johnny: this is used less, should understand more.
+ *         Why need this?
  */
 #define ASSERT_THROWS(EXPRESSION, EXCEPTION_TYPE)                       \
     do {                                                                \
@@ -97,6 +111,13 @@
  * TEST(MyModuleTests, TestThatFooFailsOnErrors) {
  *     ASSERT_EQUALS(error_success, foo(invalidValue));
  * }
+ */
+/*
+ * Johnny: This and the following must be the most used ones, so PAY ATTENTION.
+ *
+ * _TEST_TYPE_NAME is a macor defined below, see line 161. This macro get new
+ *     test case's class name.
+ * RegistrationAgent is a template class defined in line 212.
  */
 #define TEST(CASE_NAME, TEST_NAME) \
     class _TEST_TYPE_NAME(CASE_NAME, TEST_NAME) : public ::mongo::unittest::Test { \
@@ -124,6 +145,9 @@
  * TEST(FixtureClass, TestThatUsesFixture) {
  *     ASSERT_EQUALS(10, myVar);
  * }
+ */
+/*
+ * Johnny: test fixture, understand fixture, see example above.
  */
 #define TEST_F(FIXTURE_NAME, TEST_NAME) \
     class _TEST_TYPE_NAME(FIXTURE_NAME, TEST_NAME) : public FIXTURE_NAME { \
