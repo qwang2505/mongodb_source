@@ -30,6 +30,9 @@ namespace mongo {
      * 
      * @param os    ostream& to receive printed stack backtrace
      */
+    /*
+     * Johnny: use backtrace to get stack trace.
+     */
     void printStackTrace( std::ostream& os ) {
         
         void *b[maxBackTraceFrames];
