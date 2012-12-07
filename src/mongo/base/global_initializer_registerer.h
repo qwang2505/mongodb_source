@@ -31,6 +31,9 @@ namespace mongo {
      * call to a variant of mongo::runGlobalInitializers().  See mongo/base/initializer.h,
      * mongo/base/init.h and mongo/base/initializer_dependency_graph.h for details.
      */
+    /*
+     * Johnny: class to register global initializer.
+     */
     class GlobalInitializerRegisterer {
         MONGO_DISALLOW_COPYING(GlobalInitializerRegisterer);
 

@@ -53,6 +53,8 @@ namespace mongo {
      */
     class ConfigurationVariableManager {
         // Johnny: How to implement dis allow copy? this might be fun.
+        //   HowTo: implement copy constructor and operator =, both take reference as parameter, and
+        //   return reference instead. In this way, the original object isn't been copied.
         MONGO_DISALLOW_COPYING(ConfigurationVariableManager);
 
     public:

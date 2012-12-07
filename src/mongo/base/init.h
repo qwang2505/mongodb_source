@@ -16,6 +16,7 @@
 /**
  * Utility macros for declaring global initializers and configurable variables.
  *
+ * Johnny why?
  * Should NOT be included by other header files.  Include only in source files.
  *
  * Initializers are arranged in an acyclic directed dependency graph.  Declaring
@@ -109,6 +110,8 @@
  * PREREQUISITES is a tuple of 0 or more string literals, i.e., ("a", "b", "c"), or ()
  * DEPENDENTS is a tuple of 0 or more string literals.
  *
+ * Johnny legitimate: make legal
+ *
  * At run time, the full set of prerequisites for NAME will be computed as the union of the
  * explicit PREREQUISITES and the set of all other mongo initializers that name NAME in their
  * list of dependents.
@@ -123,6 +126,9 @@
  * TODO: May want to be able to name the initializer separately from the function name.
  * A form that takes an existing function or that lets the programmer supply the name
  * of the function to declare would be options.
+ */
+/*
+ * Johnny Pay attention to the usage of macro MONGO_MAKE_STRING_VECTOR
  */
 #define MONGO_INITIALIZER_GENERAL(NAME, PREREQUISITES, DEPENDENTS) \
     ::mongo::Status _MONGO_INITIALIZER_FUNCTION_NAME(NAME)(::mongo::InitializerContext*); \

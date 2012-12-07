@@ -42,6 +42,9 @@ namespace mongo {
             newNode.prerequisites.insert(prerequisites[i]);
         }
 
+        /*
+         * Johnny insert self to dependents' prerequisites
+         */
         for (size_t i = 0; i < dependents.size(); ++i) {
             _nodes[dependents[i]].prerequisites.insert(name);
         }
@@ -49,6 +52,10 @@ namespace mongo {
         return Status::OK();
     }
 
+    /*
+     * Johnny Be aware of return an InitializerFunction() if failed.
+     *   what's this doing?
+     */
     InitializerFunction InitializerDependencyGraph::getInitializerFunction(
             const std::string& name) const {
 
@@ -105,17 +112,29 @@ namespace mongo {
          * This function implements a depth-first traversal, and is called once for each node in the
          * graph by topSort(), above.
          */
+        /*
+         * Johnny for each node, have to call this. If the retured status is not OK, means it's a
+         *   cylic graph, return error.
+         *
+         *   explicitly: frankly
+         *   facilitate: make easier
+         */
 
+        // Johnny: unordered_set::count(key): count the number of elements with the specific key.
+        //   If already visited, return ok.
         if ((*visitedNodeNames).count(currentNode.first))
             return Status::OK();
 
+        // Johnny If do not have an InitializerFunction, return error status
         if (!currentNode.second.fn)
             return Status(ErrorCodes::BadValue, currentNode.first);
 
+        // Johnny add current into inProgressNodeNames
         inProgressNodeNames->push_back(currentNode.first);
 
         std::vector<std::string>::iterator firstOccurence = std::find(
                 inProgressNodeNames->begin(), inProgressNodeNames->end(), currentNode.first);
+        // Johnny node occurrence in inProgressNodeNames bafore, cycle, return error status.
         if (firstOccurence + 1 != inProgressNodeNames->end()) {
             sortedNames->clear();
             std::copy(firstOccurence, inProgressNodeNames->end(), std::back_inserter(*sortedNames));
@@ -126,15 +145,18 @@ namespace mongo {
             return Status(ErrorCodes::GraphContainsCycle, os.str());
         }
 
+        // Johnny recursively test prerequisites of current node.
         for (unordered_set<std::string>::const_iterator
                  iter = currentNode.second.prerequisites.begin(),
                  end = currentNode.second.prerequisites.end();
              iter != end; ++iter) {
 
+            // Johnny in case prerequisite not in nodemap
             NodeMap::const_iterator nextNode = nodeMap.find(*iter);
             if (nextNode == nodeMap.end())
                 return Status(ErrorCodes::BadValue, *iter);
 
+            // Johnny recusive top sort
             Status status = recursiveTopSort(nodeMap,
                                              *nextNode,
                                              inProgressNodeNames,

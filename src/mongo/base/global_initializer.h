@@ -24,6 +24,10 @@ namespace mongo {
      * See mongo/base/initializer.h and mongo/base/init.h for information about process
      * initialization in mongo applications.
      */
+    /*
+     * Johnny: just provide a method to get the global Initializer instance, 
+     *   but be aware of the way to implement this.
+     */
     Initializer& getGlobalInitializer();
 
 }  // namespace mongo

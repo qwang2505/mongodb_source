@@ -29,6 +29,9 @@ namespace mongo {
      *
      * See mongo/base/initializer.h and mongo/base/initializer_dependency_graph.h for more details.
      */
+    /*
+     * Johnny: these context way to do something, is pretty useful, ans fun.
+     */
     class InitializerContext {
         MONGO_DISALLOW_COPYING(InitializerContext);
 

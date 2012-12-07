@@ -30,7 +30,7 @@ namespace {
     // once in a single-threaded context.  Otherwise, static initialization inside
     // getGlobalInitializer() won't be thread-safe.
     //
-    // Johnny: when use static, think about thread-safe in the future.
+    // Johnny: while using static, think about thread-safe in the future.
     Initializer* _theGlobalInitializer = &getGlobalInitializer();
 
 }  // namespace

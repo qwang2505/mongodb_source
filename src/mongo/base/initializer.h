@@ -36,6 +36,12 @@ namespace mongo {
      * process, causing each initialization operation to execute in an order that respects the
      * programmer-established prerequistes.
      */
+    /*
+     * Johnny: Pay attention to directed acyclic graph, this might be fun. A initialization process
+     *   is described by a directed acyclic graph, understand this.
+     *
+     * Johnny: prerequistes: like some condition must be fulfilled.
+     */
     class Initializer {
         MONGO_DISALLOW_COPYING(Initializer);
     public:
@@ -44,6 +50,9 @@ namespace mongo {
 
         /**
          * Get the initializer dependency graph, presumably for the purpose of adding more nodes.
+         */
+        /*
+         * Johnny: presumably, means maybe, possible.
          */
         InitializerDependencyGraph& getInitializerDependencyGraph() { return _graph; }
 
@@ -58,6 +67,11 @@ namespace mongo {
          *
          * Returns Status::OK on success.  All other returns constitute initialization failures,
          * and the thing being initialized should be considered dead in the water.
+         */
+        /*
+         * Johnny: constitute, form.
+         *
+         * Johnny: understand this: the thing being initialized should be considered dead in the water?
          */
         Status execute(const InitializerContext::ArgumentVector& args,
                        const InitializerContext::EnvironmentMap& env) const;

@@ -44,6 +44,9 @@ namespace mongo {
      * instance of InitializerDependencyGraph.  However, no thread may call addInitializer while any
      * thread is executing those functions or addInitializer on the same instance.
      */
+    /*
+     * Johnny: be aware of Concurrency problem
+     */
     class InitializerDependencyGraph {
         MONGO_DISALLOW_COPYING(InitializerDependencyGraph);
 
@@ -61,6 +64,9 @@ namespace mongo {
          * returns "ErrorCodes::duplicateKey".  Otherwise, returns Status::OK() and adds the new node
          * to the graph.  Note that cycles in the dependency graph are not discovered in this phase.
          * Rather, they're discovered by topSort, below.
+         */
+        /*
+         * Johnny parlance: native speaking?
          */
         Status addInitializer(const std::string& name,
                               const InitializerFunction& fn,
