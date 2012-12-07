@@ -22,6 +22,7 @@ namespace mongo {
         template <typename T>
         Test::RegistrationAgent<T>::RegistrationAgent(const std::string& suiteName,
                                                       const std::string& testName) {
+            // Johnny register test into suite. If suite not exists, getSuite will new one.
             Suite::getSuite(suiteName)->add<T>(testName);
         }
 

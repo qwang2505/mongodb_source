@@ -177,6 +177,9 @@ namespace mongo {
         return ss.str();
     }
 
+    /*
+     * Johnny more like just get a name used by the compiler, and it must be unique.
+     */
     string demangleName( const type_info& typeinfo ) {
 #ifdef _WIN32
         return typeinfo.name();

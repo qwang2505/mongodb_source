@@ -148,6 +148,7 @@
  */
 /*
  * Johnny: test fixture, understand fixture, see example above.
+ *   the _agent is just the way to register test info test suite.
  */
 #define TEST_F(FIXTURE_NAME, TEST_NAME) \
     class _TEST_TYPE_NAME(FIXTURE_NAME, TEST_NAME) : public FIXTURE_NAME { \
@@ -211,6 +212,11 @@ namespace mongo {
             /**
              * Registration agent for adding tests to suites, used by TEST macro.
              */
+            /*
+             * Johnny just for register test into test case, if test case not exists, 
+             *   new one. But, it it nessacerry to have a class for this function?
+             *   And why? And remember, this is a template class.
+             */
             template <typename T>
             class RegistrationAgent : private boost::noncopyable {
             public:
@@ -249,19 +255,39 @@ namespace mongo {
          * by the programmer by overriding setupTests() in a subclass of Suite.  This
          * approach is deprecated.
          */
+        /*
+         * Johnny same mean with test case, as in multiple tests in one test case.
+         *   understand the following add method for different template type T.
+         */
         class Suite : private boost::noncopyable {
         public:
             Suite( const string& name );
             virtual ~Suite();
 
+            /*
+             * Johnny template function for add test into test case.
+             *
+             *   demangleName: just return a nice name if it has.
+             *   typeid: get unique name of type used by compiler, different in different compiler,
+             *      return a type_info reference.
+             *
+             *   I think above is just want to get the class's name.
+             */
             template<class T>
             void add() { add<T>(demangleName(typeid(T))); }
 
+            /*
+             * Johnny add test function with args.
+             *    boost::bind: create a temp functor, with the passed function pointer and parameter.
+             */
             template<class T , typename A >
             void add( const A& a ) {
                 add(demangleName(typeid(T)), boost::bind(&Suite::runTestObjectWithArg<T, A>, a));
             }
 
+            /*
+             * Johnny Be careful, Suite::runTestObject<T> is a function.
+             */
             template<class T>
             void add(const std::string& name) {
                 add(name, &Suite::runTestObject<T>);

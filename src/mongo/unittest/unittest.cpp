@@ -28,6 +28,7 @@ namespace mongo {
 
     namespace unittest {
 
+        // Johnny static method to get all suite map
         namespace {
             typedef std::map<std::string, Suite*> SuiteMap;
 
