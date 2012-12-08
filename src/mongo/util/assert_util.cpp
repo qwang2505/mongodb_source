@@ -32,6 +32,9 @@ using namespace std;
 
 namespace mongo {
 
+    /*
+     * Johnny AssertionCount, global object
+     */
     AssertionCount assertionCount;
 
     AssertionCount::AssertionCount()
@@ -46,12 +49,16 @@ namespace mongo {
         user = 0;
     }
 
+    // Johnny used where?
     void AssertionCount::condrollover( int newvalue ) {
         static const int rolloverPoint = ( 1 << 30 );
         if ( newvalue >= rolloverPoint )
             rollover();
     }
 
+    /*
+     * Johnny DBException
+     */
     bool DBException::traceExceptions = false;
 
     string DBException::toString() const {
@@ -66,6 +73,7 @@ namespace mongo {
         }
     }
 
+    // Johnny append error message and error code to BSONObjBuilder?
     void ExceptionInfo::append( BSONObjBuilder& b , const char * m , const char * c ) const {
         if ( msg.empty() )
             b.append( m , "unknown assertion" );
@@ -77,6 +85,12 @@ namespace mongo {
     }
 
     /* "warning" assert -- safe to continue, so we don't throw exception. */
+    /*
+     * Johnny NOINLINE_DECL: do not treat function as inline function.
+     *   Why?
+     *
+     * Pay attention to rate limit, why? this calls a lot?
+     */
     NOINLINE_DECL void wasserted(const char *msg, const char *file, unsigned line) {
         static bool rateLimited;
         static time_t lastWhen;
@@ -92,7 +106,9 @@ namespace mongo {
         lastLine = line;
 
         problem() << "warning assertion failure " << msg << ' ' << file << ' ' << dec << line << endl;
+        // Johnny log context? can't find where.
         logContext();
+        // Johnny set last error
         setLastError(0,msg && *msg ? msg : "wassertion failure");
         assertionCount.condrollover( ++assertionCount.warning );
 #if defined(_DEBUG) || defined(_DURABLEDEFAULTON) || defined(_DURABLEDEFAULTOFF)
@@ -200,6 +216,8 @@ namespace mongo {
         stringstream ss; ss << "exception: " << code << " " << msg; return ss.str(); 
     }
 
+    // Johnny be careful of the following implementations
+    //   verify: macor, defined in assert_util.h, line 236
     NOINLINE_DECL ErrorMsg::ErrorMsg(const char *msg, char ch) {
         int l = strlen(msg);
         verify( l < 128);

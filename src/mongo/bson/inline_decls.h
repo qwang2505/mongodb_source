@@ -19,7 +19,9 @@
 
 #if defined(__GNUC__)
 
+// Johnny this macro prevent a function to be treated as inline function.
 #define NOINLINE_DECL __attribute__((noinline))
+// Johnny packed?
 #define PACKED_DECL __attribute__((packed))
 
 #elif defined(_MSC_VER)

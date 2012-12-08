@@ -44,14 +44,17 @@ namespace mongo {
     int logLevel = 0;
     int tlogLevel = 0; // test log level. so we avoid overchattiness (somewhat) in the c++ unit tests
     mongo::mutex Logstream::mutex("Logstream");
+    // Johnny doneSetup = magicNumber?
     int Logstream::doneSetup = Logstream::magicNumber();
 
     const char *default_getcurns() { return ""; }
     const char * (*getcurns)() = default_getcurns;
 
     Nullstream nullstream;
+    // vector pointer is 0
     vector<Tee*>* Logstream::globalTees = 0;
 
+    // define tsp, thread specific ptr
     thread_specific_ptr<Logstream> Logstream::tsp;
 
     Nullstream& tlog( int level ) {
@@ -62,6 +65,7 @@ namespace mongo {
         return Logstream::get().prolog();
     }
 
+    // Johnny why define LoggingManager here? what does it do?
     class LoggingManager {
     public:
         LoggingManager()
@@ -72,6 +76,7 @@ namespace mongo {
             uassert( 10268 ,  "LoggingManager already started" , ! _enabled );
             _append = append;
 
+            // lp is file name?
             bool exists = boost::filesystem::exists(lp);
             bool isdir = boost::filesystem::is_directory(lp);
             bool isreg = boost::filesystem::is_regular(lp);
@@ -86,6 +91,7 @@ namespace mongo {
                     // only attempt rename if log is regular file
                     if ( isreg ) {
                         stringstream ss;
+                        // Johnny terseCurrentTime?
                         ss << lp << "." << terseCurrentTime( false );
                         string s = ss.str();
 
@@ -198,6 +204,7 @@ namespace mongo {
         FILE * _file;
 
     } loggingManager;
+    // Johnny pay attention to above: define a new object
 
     bool initLogging( const string& lp , bool append ) {
         cout << "all output going to: " << lp << endl;

@@ -38,8 +38,10 @@ namespace mongo {
 
     enum ExitCode;
 
+    // Johnny severe: very bad
     enum LogLevel {  LL_DEBUG , LL_INFO , LL_NOTICE , LL_WARNING , LL_ERROR , LL_SEVERE };
 
+    // Johnny why not const? this did not change LogLevel in the function?
     inline const char * logLevelToString( LogLevel l ) {
         switch ( l ) {
         case LL_DEBUG:
@@ -78,6 +80,9 @@ namespace mongo {
     }
 #endif
 
+    /*
+     * Johnny this class support label and level
+     */
     class LabeledLevel {
     public:
         LabeledLevel( int level ) : _level( level ) {}
@@ -126,12 +131,14 @@ namespace mongo {
         const T& t_;
     };
 
+    // Johnny WTF?
     class Tee {
     public:
         virtual ~Tee() {}
         virtual void write(LogLevel level , const string& str) = 0;
     };
 
+    // Johnny WTF?
     class Nullstream {
     public:
         virtual Nullstream& operator<< (Tee* tee) {
@@ -226,13 +233,19 @@ namespace mongo {
     extern Nullstream nullstream;
 
     class Logstream : public Nullstream {
+        // Johnny mutex?
         static mongo::mutex mutex;
+        // Johnny just a flag of setup?
         static int doneSetup;
+        // Johnny stringstream to be logged to.
         std::stringstream ss;
+        // Johnny log indent
         int indent;
         LogLevel logLevel;
         static FILE* logfile;
+        // Johnny scope pointer of ostream
         static boost::scoped_ptr<std::ostream> stream;
+        // Johnny seriesly, what the hell is tee?
         static std::vector<Tee*> * globalTees;
         static bool isSyslog;
     public:
@@ -253,6 +266,7 @@ namespace mongo {
         }
 #endif
         
+        // Johnny WTF?
         static int magicNumber() { return 1717; }
 
         static int getLogDesc() {
@@ -269,6 +283,7 @@ namespace mongo {
 
         void flush(Tee *t = 0);
 
+        // Johnny set log level, why return Nullstream?
         inline Nullstream& setLogLevel(LogLevel l) {
             logLevel = l;
             return *this;
@@ -302,20 +317,24 @@ namespace mongo {
             flush(tee);
             return *this;
         }
+        // Johnny WTF?
         Logstream& operator<< (std::ostream& ( *_endl )(std::ostream&)) {
             ss << '\n';
             flush(0);
             return *this;
         }
+        // Johnny WTF?
         Logstream& operator<< (std::ios_base& (*_hex)(std::ios_base&)) {
             ss << _hex;
             return *this;
         }
 
+        // Johnny what is prolog mean?
         Logstream& prolog() {
             return *this;
         }
 
+        // Johnny what is tee, again?
         void addGlobalTee( Tee * t ) {
             if ( ! globalTees )
                 globalTees = new std::vector<Tee*>();
@@ -329,6 +348,7 @@ namespace mongo {
         int getIndent() const { return indent; }
 
     private:
+        // Johnny where use this?
         static boost::thread_specific_ptr<Logstream> tsp;
         Logstream() {
             indent = 0;
@@ -359,6 +379,7 @@ namespace mongo {
     }
 
     /* without prolog */
+    // Johnny without prolog?
     inline Nullstream& _log( int level = 0 ) {
         if ( level > logLevel )
             return nullstream;

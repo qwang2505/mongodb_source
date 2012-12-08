@@ -22,6 +22,7 @@
 #include <string>
 
 #include "mongo/bson/inline_decls.h"
+// Johnny MONGO_COMPILER_NORETURN defined for different platform
 #include "mongo/platform/compiler.h"
 
 namespace mongo {
@@ -32,6 +33,10 @@ namespace mongo {
         RecvStaleConfigCode = 9996
     };
 
+    /*
+     * Johnny what's this?
+     *   like a counter, count of all kinds of error, support rollover.
+     */
     class AssertionCount {
     public:
         AssertionCount();
@@ -47,9 +52,14 @@ namespace mongo {
 
     extern AssertionCount assertionCount;
 
+    // Johnny BSON object builder?
     class BSONObjBuilder;
 
+    // Johnny exception info?
     struct ExceptionInfo {
+        /*
+         * Johnny Build ExceptionInfo with message and code, or default message and code
+         */
         ExceptionInfo() : msg(""),code(-1) {}
         ExceptionInfo( const char * m , int c )
             : msg( m ) , code( c ) {
@@ -57,6 +67,7 @@ namespace mongo {
         ExceptionInfo( const std::string& m , int c )
             : msg( m ) , code( c ) {
         }
+        // Johnny what append? append error message and error code into BSONObjBuilder
         void append( BSONObjBuilder& b , const char * m = "$err" , const char * c = "code" ) const ;
         std::string toString() const;
         bool empty() const { return msg.empty(); }        
@@ -71,6 +82,10 @@ namespace mongo {
         example: 
           throw UserException(123, ErrorMsg("blah", num_val));
     */
+    /*
+     * Johnny Why need this helper class? when build an exception like above, when directly pass string?
+     *   what does it do?
+     */
     class ErrorMsg { 
     public:
         ErrorMsg(const char *msg, char ch);
@@ -86,6 +101,15 @@ namespace mongo {
     bool inShutdown();
 
     /** Most mongo exceptions inherit from this; this is commonly caught in most threads */
+    /*
+     * Johnny aka, base mongodb exception
+     * 
+     * How to build an DBException:
+     * 1. with a ExceptionInfo object
+     * 2. with error message and error code
+     * 3. with error string and error code
+     * Also, when build an exception, call traceIfNeeded to trace.
+     */
     class DBException : public std::exception {
     public:
         DBException( const ExceptionInfo& ei ) : _ei(ei) { traceIfNeeded(*this); }
@@ -93,10 +117,14 @@ namespace mongo {
         DBException( const std::string& msg , int code ) : _ei(msg,code) { traceIfNeeded(*this); }
         virtual ~DBException() throw() { }
 
+        // Johnny get error message in ExceptionInfo
         virtual const char* what() const throw() { return _ei.msg.c_str(); }
+        // Johnny get error code in ExceptionInfo
         virtual int getCode() const { return _ei.code; }
 
+        // Johnny ?
         virtual void appendPrefix( std::stringstream& ss ) const { }
+        // Johnny add context? may be just add more info to error message
         virtual void addContext( const std::string& str ) {
             _ei.msg = str + causedBy( _ei.msg );
         }
@@ -105,6 +133,7 @@ namespace mongo {
 
         const ExceptionInfo& getInfo() const { return _ei; }
     private:
+        // Johnny widely guess: append track to message? 
         static void traceIfNeeded( const DBException& e );
     public:
         static bool traceExceptions;
@@ -179,6 +208,9 @@ namespace mongo {
 
 
     /* "user assert".  if asserts, user did something wrong, not our code */
+    /*
+     * Johnny can't understand this macro
+     */
 #define MONGO_uassert(msgid, msg, expr) (void)( MONGO_likely(!!(expr)) || (mongo::uasserted(msgid, msg), 0) )
 
     /* warning only - keeps going */
