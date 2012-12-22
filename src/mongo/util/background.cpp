@@ -44,6 +44,9 @@ namespace mongo {
     };
 
     BackgroundJob::BackgroundJob( bool selfDelete ) {
+        // Johnny reset is a method of shard_ptr, it will delete the previous pointer.
+        //   Why new a new JobStatus, but not just change the value of deleteSelf in JobStatus?
+        //   declare deleteSelf as const, to avoid change?
         _status.reset( new JobStatus( selfDelete ) );
     }
 
@@ -51,6 +54,7 @@ namespace mongo {
     void BackgroundJob::jobBody( boost::shared_ptr<JobStatus> status ) {
         LOG(1) << "BackgroundJob starting: " << name() << endl;
         {
+            // Johnny add {} to make scoped_lock work? definitely
             scoped_lock l( status->m );
             massert( 13643 , mongoutils::str::stream() << "backgroundjob already started: " << name() , status->state == NotStarted );
             status->state = Running;
@@ -58,6 +62,7 @@ namespace mongo {
 
         const string threadName = name();
         if( ! threadName.empty() )
+            // Johnny defined where?
             setThreadName( threadName.c_str() );
 
         try {
@@ -73,14 +78,18 @@ namespace mongo {
         {
             scoped_lock l( status->m );
             status->state = Done;
+            // Johnny finished is a boost::condition, what does it do?
+            //  for condition mutex
             status->finished.notify_all();
         }
 
         if( status->deleteSelf )
+            // this won't cause any error?
             delete this;
     }
 
     BackgroundJob& BackgroundJob::go() {
+        // Johnny create a new thread to run jobBody, and return current object.
         boost::thread t( boost::bind( &BackgroundJob::jobBody , this, _status ) );
         return *this;
     }

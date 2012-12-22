@@ -53,6 +53,7 @@ namespace mongo {
          */
         explicit BackgroundJob(bool selfDelete = false);
 
+        // Johnny abstract method to return name of job
         virtual std::string name() const = 0;
 
         /**

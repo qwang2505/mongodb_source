@@ -34,6 +34,8 @@
 #include "mongo/util/concurrency/mutexdebugger.h"
 #endif
 
+// Johnny These utils need to re-check, not understand now.
+
 namespace mongo {
 
     inline boost::xtime incxtimemillis( long long s ) {
@@ -51,6 +53,7 @@ namespace mongo {
     // If you create a local static instance of this class, that instance will be destroyed
     // before all global static objects are destroyed, so _destroyingStatics will be set
     // to true before the global static variables are destroyed.
+    // Johnny why this object destroyed before others?
     class StaticObserver : boost::noncopyable {
     public:
         static bool _destroyingStatics;
@@ -65,9 +68,11 @@ namespace mongo {
     class mutex : boost::noncopyable {
     public:
         const char * const _name;
+        // constructor
         mutex(const char *name) : _name(name)
         {
             _m = new boost::timed_mutex();
+            // Johnny notice: turn-off heap checking on _m
             IGNORE_OBJECT( _m  );   // Turn-off heap checking on _m
         }
         ~mutex() {

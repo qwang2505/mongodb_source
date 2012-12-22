@@ -29,6 +29,9 @@ namespace mongo {
 
         typedef boost::function<void()> lam;
 
+        // Johnny message passing between threads.
+        // TODO read task.h first
+        //  Don't really know how to use it.
         /** typical usage is: task::fork( new Server("threadname") ); */
         class Server : public Task {
         public:

@@ -28,6 +28,7 @@ namespace mongo {
 
     namespace task {
 
+        // Johnny what's this? dummy codes?
         /*void foo() {
             boost::mutex m;
             boost::mutex::scoped_lock lk(m);
@@ -89,6 +90,7 @@ namespace mongo {
     namespace task {
 
         /* to get back a return value */
+        // Johnny who are you?
         struct Ret {
             Ret() : done(false),m("Ret") { }
             bool done;

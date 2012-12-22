@@ -27,6 +27,8 @@ namespace mongo {
         /** abstraction around threads.  simpler than BackgroundJob which is used behind the scenes.
             allocate the Task dynamically.  when the thread terminates, the Task object will delete itself.
         */
+        // TODO read BackgroundJob first
+        // Johnny background job is thread safe, it could run run() method in another thread
         class Task : private BackgroundJob {
         protected:
             virtual void setUp();  // Override to perform any do-once work for the task.
@@ -48,6 +50,7 @@ namespace mongo {
             void begin();
         };
 
+        // Johnny actually call this to do the work.
         /** run once */
         void fork(Task *t);
 

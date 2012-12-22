@@ -47,6 +47,7 @@ namespace mongo {
         }
         // think about deadlocks when using ref.  the other methods
         // above will always be safe as they are "leaf" operations.
+        // Johnny: what is ref?
         struct ref {
             SimpleMutex::scoped_lock lk;
         public:
