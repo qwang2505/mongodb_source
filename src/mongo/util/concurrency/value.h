@@ -49,7 +49,9 @@ namespace mongo {
     /** there is now one mutex per DiagStr.  If you have hundreds or millions of
         DiagStrs you'll need to do something different.
     */
+    // Johnny thread-safe string
     class DiagStr {
+        // Johnny mutable: can change value in a const function.
         mutable SpinLock m;
         string _s;
     public:
@@ -72,6 +74,7 @@ namespace mongo {
             scoped_spinlock lk(m);
             _s = s;
         }
+        // Johnny what's this? operator string?
         operator string() const { return get(); }
         void operator=(const string& s) { set(s); }
         void operator=(const DiagStr& rhs) { 

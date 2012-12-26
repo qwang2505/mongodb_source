@@ -29,6 +29,10 @@ namespace mongo {
      * You can also think of it as a box that can be either full or empty.
      */
 
+    // Johnny don't really understand what's this, just for concurrency?
+    //   from how it been used, may understand something.
+    //   haskell is a lauguage? so this implementation is borrowed from other language, this
+    //   is interesting. why borrow from haskell?
     template <typename T>
     class MVar {
     public:

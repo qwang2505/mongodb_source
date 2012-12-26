@@ -34,9 +34,11 @@ namespace mongo {
                     sleepmillis(0);
                 }
                 else {
+                    // Johnny WTF
                     RARELY {
                         sleepmillis(0);
                         if( ncalls < 128 * 20 ) {
+                            // JOhnny WTF
                             OCCASIONALLY { 
                                 sleepmillis(3);
                             }
@@ -64,6 +66,7 @@ namespace mongo {
         };
  
         /* in a rwlock situation this will fail, so not appropriate for things like that. */
+// Johnny where to use this macro?
 # define RACECHECK \
         static race::Block __cp(__FILE__, __LINE__); \
         race::Block::Within __ck(__cp);

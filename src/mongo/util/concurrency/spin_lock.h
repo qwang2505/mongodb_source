@@ -30,6 +30,8 @@ namespace mongo {
      * The spinlock currently requires late GCC support routines to be efficient.
      * Other platforms default to a mutex implemenation.
      */
+    // Johnny just understand what is spinlock, and know how to use it.
+    //   Do not care about the implementation.
     class SpinLock : boost::noncopyable {
     public:
         SpinLock();
@@ -67,6 +69,7 @@ namespace mongo {
 #endif
     };
     
+    // Johnny when to use this?
     class scoped_spinlock : boost::noncopyable {
     public:
         scoped_spinlock( SpinLock& l ) : _l(l) {

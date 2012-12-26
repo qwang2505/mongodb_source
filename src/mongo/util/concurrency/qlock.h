@@ -45,6 +45,9 @@ namespace mongo {
         the "w" state are blocked in w_to_X(), one thread will be released in the X state.  The
         other threads remain blocked in w_to_X() until the thread in the X state calls X_to_w().
     */
+    // Johnny understand this fucking lock
+    //   understand above examples, that's all. It's for file operation, and define different operation
+    //   has different lock type, and each lock type can have what operation.
     class QLock : boost::noncopyable {
         struct Z { 
             Z() : n(0) { }

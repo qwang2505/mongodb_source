@@ -13,6 +13,7 @@ mvar.h
 
 race.h
   RACECHECK
+  Johnny In this file, just define a macro called RACECHECK, don't know what it can do.
 
 rwlock.h - read/write locks (RWLock)
   RWLock
