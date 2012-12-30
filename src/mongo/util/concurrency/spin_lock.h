@@ -69,7 +69,7 @@ namespace mongo {
 #endif
     };
     
-    // Johnny when to use this?
+    // Johnny when to use this? see evernote
     class scoped_spinlock : boost::noncopyable {
     public:
         scoped_spinlock( SpinLock& l ) : _l(l) {

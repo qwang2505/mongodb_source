@@ -11,12 +11,12 @@
 namespace mongo { 
 
     /** "Quad Lock"
-        we want to be able to do semi-granular locking now, and read/write style locking for that. 
+        we want to be able to do semi-granular(ban ke li) locking now, and read/write style locking for that. 
         if that is all we want we could just have a rwlock per lockable entity, and we are done. 
         however at times we want to stop-the-world.  in addition, sometimes we want to stop the 
         world *for writing only*.  
 
-        A hierarchy of locks could achieve this; instead here we've modeled it in one synchronization
+        A hierarchy(deng ji) of locks could achieve this; instead here we've modeled it in one synchronization
         object our "QLock".  Our possible locked states are:
 
           w - i will write, and i will granularly lock after the qlock acquisition
